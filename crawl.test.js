@@ -27,11 +27,28 @@ test( 'normalizeURL strip http', () => {
     expect(actual).toEqual(expected);
 })
 
-test( 'getURLsFromHTML', () => {
+test( 'getURLsFromHTML absolute', () => {
     let inputHTMLBody = `
     <html>
         <body>
-            <a href='https://blog.boot.dev/'> 
+            <a href='https://blog.boot.dev/path/'> 
+                Boot.dev blog
+            </a>
+        </body>
+    </html>
+    `
+    let baseURL = 'https://blog.boot.dev/path/';
+
+    let actual = getURLsFromHTML(inputHTMLBody, baseURL);
+    let expected = [ 'https://blog.boot.dev/path/' ];
+    expect(actual).toEqual(expected);
+})
+
+test( 'getURLsFromHTML relative', () => {
+    let inputHTMLBody = `
+    <html>
+        <body>
+            <a href='/path/'> 
                 Boot.dev blog
             </a>
         </body>
@@ -40,6 +57,42 @@ test( 'getURLsFromHTML', () => {
     let baseURL = 'https://blog.boot.dev';
 
     let actual = getURLsFromHTML(inputHTMLBody, baseURL);
-    let expected = [ 'https://blog.boot.dev/' ];
+    let expected = [ 'https://blog.boot.dev/path/' ];
+    expect(actual).toEqual(expected);
+})
+test( 'getURLsFromHTML both', () => {
+    let inputHTMLBody = `
+    <html>
+        <body>
+            <a href='https://blog.boot.dev/path1/'> 
+                Boot.dev blog path one
+            </a>
+            <a href='/path2/'> 
+                Boot.dev blog path two
+            </a>
+        </body>
+    </html>
+    `
+    let baseURL = 'https://blog.boot.dev';
+
+    let actual = getURLsFromHTML(inputHTMLBody, baseURL);
+    let expected = [ 'https://blog.boot.dev/path1/', 'https://blog.boot.dev/path2/' ];
+    expect(actual).toEqual(expected);
+})
+
+test( 'getURLsFromHTML invalid', () => {
+    let inputHTMLBody = `
+    <html>
+        <body>
+            <a href='invalid'> 
+                invalid
+            </a>
+        </body>
+    </html>
+    `
+    let baseURL = 'https://blog.boot.dev';
+
+    let actual = getURLsFromHTML(inputHTMLBody, baseURL);
+    let expected = [];
     expect(actual).toEqual(expected);
 })

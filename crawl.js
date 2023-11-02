@@ -1,10 +1,31 @@
 const {JSDOM} = require('jsdom');
+
 function getURLsFromHTML(HTMLBody, baseURL){
+
     const urls = [];
     const dom = new JSDOM(HTMLBody);
     const linkElements = dom.window.document.querySelectorAll('a');
+    
     for(const linkElement of linkElements){
-        urls.push(linkElement.href);
+
+        if(linkElement.href.slice(0, 1) === '/'){
+            //relative path
+            try{
+                const urlObj = new URL(`${baseURL}${linkElement.href}`);
+                urls.push(urlObj.href)
+            } catch(err){
+                console.log(`Error with relative path: ${err.message}`)
+            }
+            
+        } else {
+            // absolute path
+            try{
+                const urlObj = new URL(linkElement.href);
+                urls.push(urlObj.href)
+            } catch(err){
+                console.log(`Error with absolute path: ${err.message}`)
+            }
+        }
     }
     return urls;
 }
@@ -19,8 +40,15 @@ function normalizeURL(urlString){
     return hostPath;
 }
 
+
 module.exports = {
     normalizeURL,
     getURLsFromHTML
 }
 
+// try{
+//     const urlObj = new URL('linkElement.href');
+//     console.log(urlObj)
+// } catch(err){
+//     console.log(`error:${err.message}`)
+// }
