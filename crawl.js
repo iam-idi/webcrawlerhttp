@@ -12,6 +12,12 @@ async function crawlPage(currentURL){
             return;
         }
 
+        const contentType = resp.headers.get('content-type');
+        if(!contentType.includes('text/html')){
+            console.log(`non html response, content type: ${contentType} on page: ${currentURL}`);
+            return;
+        }
+
         console.log(await resp.text());
 
     } catch (err) {
