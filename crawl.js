@@ -1,11 +1,32 @@
 const {JSDOM} = require('jsdom');
 
+async function crawlPage(currentURL){
+
+    console.log(`Actively crawling: ${currentURL}`);
+
+    try {
+        const resp = await fetch(currentURL);
+
+        if(resp.status > 399){
+            console.log(`error in fetch with status code: ${resp.status} on page: ${currentURL}`);
+            return;
+        }
+
+        console.log(await resp.text());
+
+    } catch (err) {
+        console.log(`error in fetch: ${err.message}, on page ${currentURL}`)
+    }
+
+    
+}
+
 function getURLsFromHTML(HTMLBody, baseURL){
 
     const urls = [];
     const dom = new JSDOM(HTMLBody);
     const linkElements = dom.window.document.querySelectorAll('a');
-    
+
     for(const linkElement of linkElements){
 
         if(linkElement.href.slice(0, 1) === '/'){
@@ -43,12 +64,6 @@ function normalizeURL(urlString){
 
 module.exports = {
     normalizeURL,
-    getURLsFromHTML
+    getURLsFromHTML,
+    crawlPage
 }
-
-// try{
-//     const urlObj = new URL('linkElement.href');
-//     console.log(urlObj)
-// } catch(err){
-//     console.log(`error:${err.message}`)
-// }
