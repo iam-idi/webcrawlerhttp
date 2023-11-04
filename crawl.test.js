@@ -27,6 +27,8 @@ test( 'normalizeURL strip http', () => {
     expect(actual).toEqual(expected);
 })
 
+// getURLsFromHTML function
+
 test( 'getURLsFromHTML absolute', () => {
     let inputHTMLBody = `
     <html>
